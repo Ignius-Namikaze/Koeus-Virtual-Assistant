@@ -28,6 +28,9 @@ import matplotlib.pyplot as plt
 import cv2
 import subprocess
 from playsound import playsound
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from datetime import timedelta
 
 
 engine = pyttsx3.init('sapi5')
@@ -383,6 +386,47 @@ if __name__ == "__main__":
             speak(joke)
             print(joke)
 
+        elif 'set a reminder' in query:
+            # set up the credentials
+            creds = service_account.Credentials.from_service_account_file(
+                "D:\Personal Assistant\koeus-392406-e9cb4dc089db.json",
+            scopes=['https://www.googleapis.com/auth/calendar'])
+
+            # create the calendar service
+            service = build('calendar', 'v3', credentials=creds)
+
+            speak("What should be the start time?")
+            speak("The format should be [Year, Month, Day, 24Hour, Mins, Seconds]")
+            st = take_command()
+            # set the start and end times for the event
+            start_time = datetime(st)
+            end_time = start_time + timedelta(hours=1)
+
+            speak("What is the reminder about?")
+            Su = take_command()
+            speak("Can you describe the event?")
+            De = take_command()
+            # create the event
+            event = {
+                    'summary': Su,
+                    'description': De,
+                    'start': {
+                    'dateTime': start_time.isoformat(),
+                    'timeZone': 'India/Delhi',
+                        },
+                    'end': {
+                    'dateTime': end_time.isoformat(),
+                    'timeZone': 'India/Delhi',
+                        },
+                    'reminders': {
+                    'useDefault': True,
+                        },
+                    }
+
+            # insert the event into the calendar
+            event = service.events().insert(calendarId='primary', body=event).execute()
+            print('Event created: %s' % (event.get('htmlLink')))
+            speak("Event Created")
         elif 'goodbye' in query:
             speak("Goodbye! Have a")
             greet_user()
