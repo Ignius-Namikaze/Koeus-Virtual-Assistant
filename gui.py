@@ -107,6 +107,7 @@ window = Tk()
 
 window.geometry("466x61")
 window.configure(bg = "#A0A0A0")
+window.overrideredirect(True)
 
 
 canvas = Canvas(
