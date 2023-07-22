@@ -22,7 +22,6 @@ from requests_html import HTMLSession
 import requests
 from PIL import Image
 import random
-import pywhatkit
 from translate import Translator
 from random import choice
 from pprint import pprint
@@ -46,6 +45,7 @@ def take_command():
     with sr.Microphone() as source:
         print("Listening...")
         r.pause_threshold = 1
+        r.adjust_for_ambient_noise(source)
         audio = r.listen(source)
 
     try:
@@ -88,7 +88,7 @@ def set_alarm():
 
 from pathlib import Path
 
-# from tkinter import *
+from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
@@ -101,7 +101,18 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def run_script():
-    exec(open("koeus.py").read())
+    global var
+    if var.get() == 0:
+        var.set(1)
+        exec(open("koeus.py").read())
+        button_image_1 = PhotoImage(
+    file=relative_to_assets("button_0.png"))
+    else:
+        var.set(0)
+        button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+        window.quit()
+    
 
 window = Tk()
 
@@ -109,6 +120,8 @@ window.geometry("466x61")
 window.configure(bg = "#A0A0A0")
 window.overrideredirect(True)
 
+var = BooleanVar()
+var.set(False)
 
 canvas = Canvas(
     window,
@@ -144,13 +157,13 @@ entry_bg_1 = canvas.create_image(
     30.5,
     image=entry_image_1
 )
-entry_1 = Text(
-    bd=0,
-    bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
+label_1 = Label(text="Koeus"
+    #bd=0,
+    #bg="#FFFFFF",
+    #fg="#000716",
+    #highlightthickness=0
 )
-entry_1.place(
+label_1.place(
     x=57.0,
     y=4.0,
     width=404.0,
